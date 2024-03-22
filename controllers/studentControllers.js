@@ -29,8 +29,8 @@ exports.createStudent = async (req, res) => {
   }
 };
 exports.getStudentDetails = async (req, res) => {
-  const page = parseInt(req.query.page) || 1; 
-  const itemsPerPage = 15; 
+  const page = parseInt(req.query.page) || 1;
+  const itemsPerPage = 15;
 
   try {
     const totalStudents = await Student.countDocuments();
@@ -59,7 +59,7 @@ exports.getResult = async (req, res) => {
 
   try {
     const response = await axios.post(captchaVerifyUrl);
-    const {success } = response.data;
+    const { success } = response.data;
     if (!success) {
       const result = await Student.findOne({ rollNo, className });
       if (result) {
@@ -86,5 +86,32 @@ exports.getClasses = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Server Error" });
+  }
+};
+exports.deleteStudentResult = async (req, res) => {
+  try {
+    // Input validation
+    const { id } = req.body;
+    if (!id) {
+      return res.status(400).json({ success: false, error: 'ID parameter is missing' });
+    }
+
+    // Check if the student result exists
+    const studentResult = await Student.findById(id);
+    if (!studentResult) {
+      return res.status(404).json({ success: false, error: 'Result not found' });
+    }
+
+    // Delete the student result
+    const deletedStudent = await Student.findByIdAndDelete(id);
+    if (!deletedStudent) {
+      return res.status(404).json({ success: false, error: 'Failed to delete student result' });
+    }
+
+    // Respond with success message
+    return res.status(200).json({ success: true, message: 'Deleted successfully' });
+  } catch (error) {
+    console.error('Error in deleting student result:', error);
+    return res.status(500).json({ success: false, error: 'Server Error' });
   }
 };
