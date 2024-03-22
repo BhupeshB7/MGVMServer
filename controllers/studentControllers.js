@@ -30,7 +30,7 @@ exports.createStudent = async (req, res) => {
 };
 exports.getStudentDetails = async (req, res) => {
   const page = parseInt(req.query.page) || 1; // Get current page from query parameters, default to 1 if not provided
-  const itemsPerPage = 1; // Number of items per page
+  const itemsPerPage = 15; // Number of items per page
 
   try {
     const totalStudents = await Student.countDocuments();
